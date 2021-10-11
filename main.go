@@ -1,10 +1,18 @@
 package main
 
-import "github.com/dierbei/blind-box/initialize"
+import (
+	"github.com/dierbei/blind-box/initialize"
+	"os"
+	"os/signal"
+	"syscall"
+)
 
 func main() {
-	initialize.InitLogger()
-	initialize.InitConfig()
-	engine := initialize.InitRouter()
-	engine.Run(":8080")
+	initialize.HttpServerRun()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGKILL, syscall.SIGQUIT, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	initialize.HttpServerStop()
 }

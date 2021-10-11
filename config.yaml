@@ -1,1 +1,11 @@
-port: 8080
+addr: ':8080'
+read_timeout: 10    # 读取超时时长
+write_timeout: 10   # 写入超时时长
+max_header_bytes: 20 # 最大的header大小，二进制位长度
+
+mysql:
+  user: 'root'
+  password: 'root'
+  host: '192.168.244.137'
+  port: 3306
+  dbname: 'blindbox'

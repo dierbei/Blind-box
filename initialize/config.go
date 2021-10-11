@@ -9,7 +9,7 @@ import (
 
 func InitConfig() {
 	v := viper.New()
-	v.SetConfigFile("config-release.yaml")
+	v.SetConfigFile("config.yaml")
 	if err := v.ReadInConfig(); err != nil {
 		zap.S().Errorw("v.ReadInConfig failed", "msg", err.Error())
 		return
