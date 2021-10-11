@@ -9,3 +9,6 @@ mysql:
   host: '192.168.244.137'
   port: 3306
   dbname: 'blindbox'
+
+wx:
+  appid: 'wxd7a5ff580dd837c5&secret=d2d7cf5f73843fcf5d1a352c358d4823'
