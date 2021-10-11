@@ -18,6 +18,10 @@ type WxSession struct {
 func WxLogin(jscode string) (session WxSession, err error) {
 	client := &http.Client{}
 
+	// appid=wxd7a5ff580dd837c5
+	// secret=d2d7cf5f73843fcf5d1a352c358d4823
+	// js_code="+ LoginDB.getCode()+"
+	// grant_type=authorization_code";
 	//String url = "https://api.weixin.qq.com/sns/jscode2session?appid=wxd7a5ff580dd837c5&secret=d2d7cf5f73843fcf5d1a352c358d4823&js_code="+ LoginDB.getCode()+"&grant_type=authorization_code";
 
 	//生成要访问的url

@@ -11,4 +11,4 @@ mysql:
   dbname: 'blindbox'
 
 wx:
-  appid: 'wxd7a5ff580dd837c5&secret=d2d7cf5f73843fcf5d1a352c358d4823'
+  appid: 'wxd7a5ff580dd837c5'
