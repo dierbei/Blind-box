@@ -3,6 +3,7 @@ package wx
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/dierbei/blind-box/global"
 	"io/ioutil"
 	"net/http"
 )
@@ -17,33 +18,23 @@ type WxSession struct {
 //WxLogin 微信用户授权
 func WxLogin(jscode string) (session WxSession, err error) {
 	client := &http.Client{}
-
-	// appid=wxd7a5ff580dd837c5
-	// secret=d2d7cf5f73843fcf5d1a352c358d4823
-	// js_code="+ LoginDB.getCode()+"
-	// grant_type=authorization_code";
-	//String url = "https://api.weixin.qq.com/sns/jscode2session?appid=wxd7a5ff580dd837c5&secret=d2d7cf5f73843fcf5d1a352c358d4823&js_code="+ LoginDB.getCode()+"&grant_type=authorization_code";
-
-	//生成要访问的url
-	url := fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",
-		"xxxYOUR APPIDxxx",
-		"xxxYOUR SECRETxxx",
-		jscode,
+	url := fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code="+jscode+"&grant_type=%s",
+		global.ServerConfig.Wx.AppID,
+		global.ServerConfig.Wx.Secret,
+		global.ServerConfig.Wx.GrantType,
 	)
 
 	//提交请求
 	reqest, err := http.NewRequest("GET", url, nil)
-
 	if err != nil {
-		panic(err)
+		return WxSession{}, err
 	}
 
 	//处理返回结果
 	response, _ := client.Do(reqest)
-
 	body, err := ioutil.ReadAll(response.Body)
-
 	jsonStr := string(body)
+
 	//解析json
 	if err := json.Unmarshal(body, &session); err != nil {
 		session.SessionKey = jsonStr

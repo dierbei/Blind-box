@@ -11,4 +11,6 @@ mysql:
   dbname: 'blindbox'
 
 wx:
-  appid: 'wxd7a5ff580dd837c5'
+  appid: 'wx7e1a5b4562d9d59e'
+  secret: 'c438a24790fff29f29a4edad9ce601e3'
+  grant_type: 'authorization_code'

@@ -71,5 +71,10 @@ func InitRouter() *gin.Engine {
 		v1.WomanRegister(womanGroup)
 	}
 
+	userGroup := engine.Group("/v1")
+	{
+		v1.UserRegister(userGroup)
+	}
+
 	return engine
 }
