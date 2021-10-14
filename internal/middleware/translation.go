@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"reflect"
+
 	"github.com/dierbei/blind-box/pkg/public"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/locales/en"
@@ -9,7 +11,6 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 	en_translations "gopkg.in/go-playground/validator.v9/translations/en"
 	zh_translations "gopkg.in/go-playground/validator.v9/translations/zh"
-	"reflect"
 )
 
 //设置Translation

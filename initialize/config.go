@@ -1,10 +1,10 @@
 package initialize
 
 import (
-	"github.com/dierbei/blind-box/global"
-
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+
+	"github.com/dierbei/blind-box/global"
 )
 
 func InitConfig() {

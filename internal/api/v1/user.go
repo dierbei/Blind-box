@@ -1,10 +1,10 @@
 package v1
 
 import (
-	"github.com/pkg/errors"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 
 	"github.com/dierbei/blind-box/global"
 	"github.com/dierbei/blind-box/internal/middleware"
@@ -23,7 +23,7 @@ func UserRegister(router *gin.RouterGroup) {
 	userGroup.GET("/login", user.Login)
 	userGroup.GET("/myaddlist", user.MyAddList)
 	userGroup.GET("/prizelist", user.PrizeList)
-	userGroup.GET("/list", user.List)
+	userGroup.GET("/list", middleware.Cors(), user.List)
 }
 
 func (handler *UserController) List(ctx *gin.Context) {

@@ -2,14 +2,15 @@ package initialize
 
 import (
 	"context"
-	"github.com/dierbei/blind-box/global"
-	v1 "github.com/dierbei/blind-box/internal/api/v1"
-	"github.com/dierbei/blind-box/internal/middleware"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/dierbei/blind-box/global"
+	v1 "github.com/dierbei/blind-box/internal/api/v1"
+	"github.com/dierbei/blind-box/internal/middleware"
 )
 
 var (
@@ -21,6 +22,7 @@ func HttpServerRun() {
 	InitConfig()
 	InitMySQL()
 	initRedis()
+	initOSS()
 
 	//todo 发布需要设置为release
 	//gin.SetMode(global.ServerConfig.Mode)
@@ -60,12 +62,15 @@ func InitRouter() *gin.Engine {
 
 	manGroup := engine.Group("/v1")
 	manGroup.Use(
-		middleware.TranslationMiddleware())
+		middleware.TranslationMiddleware(),
+		middleware.Logging())
 	{
 		v1.ManRegister(manGroup)
 	}
 
 	userGroup := engine.Group("/v1")
+	userGroup.Use(
+		middleware.Logging())
 	{
 		v1.UserRegister(userGroup)
 	}

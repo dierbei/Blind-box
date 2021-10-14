@@ -1,11 +1,12 @@
 package public
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/universal-translator"
 	"github.com/pkg/errors"
 	"gopkg.in/go-playground/validator.v9"
-	"strings"
 )
 
 const (

@@ -19,3 +19,10 @@ redis:
   addr: '192.168.244.137:6379'
   password: 'youhe@@@520'
   db: 0
+
+alioss:
+  end_point: 'oss-cn-hangzhou.aliyuncs.com'
+  access_key: 'LTAI4Fyc2WMmxFpWigqrY1kM'
+  access_key_secret: '3lbGsC3RvOOb812qKgoeatVhMzmzYL'
+  bucket: 'manhe-hcyj'
+  base_url: 'https://manhe-hcyj.oss-cn-hangzhou.aliyuncs.com/'

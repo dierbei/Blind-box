@@ -5,9 +5,17 @@ import "gorm.io/gorm"
 type User struct {
 	BaseModel
 	Openid string `json:"openid"`
+	Status int    `json:"status" gorm:"default:0"`
 }
 
-func (model *User) SelectAll(tx *gorm.DB) ([]User, error) {
+func (userModel *User) UpdateStatus(tx *gorm.DB) error {
+	if err := tx.Table(userModel.TableName()).Update("status = ?", 1).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (userModel *User) SelectAll(tx *gorm.DB) ([]User, error) {
 	var user []User
 	if err := tx.Find(&user).Error; err != nil {
 		return nil, err
@@ -15,23 +23,31 @@ func (model *User) SelectAll(tx *gorm.DB) ([]User, error) {
 	return user, nil
 }
 
-func (model *User) Select(tx *gorm.DB) (*User, error) {
+func (userModel *User) SelectByID(tx *gorm.DB) (*User, error) {
 	user := User{}
-	if err := tx.Where("openid = ?", model.Openid).First(&user).Error; err != nil {
+	if err := tx.Where("id = ?", userModel.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
 }
 
-func (user *User) Insert(tx *gorm.DB) error {
-	if err := tx.Create(user).Error; err != nil {
+func (userModel *User) Select(tx *gorm.DB) (*User, error) {
+	user := User{}
+	if err := tx.Where("openid = ?", userModel.Openid).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (userModel *User) Insert(tx *gorm.DB) error {
+	if err := tx.Create(userModel).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (user *User) ExistOpenID(tx *gorm.DB) bool {
-	result := tx.Where("openid = ?", user.Openid).First(&User{})
+func (userModel *User) ExistOpenID(tx *gorm.DB) bool {
+	result := tx.Where("openid = ?", userModel.Openid).First(&User{})
 	if result.RowsAffected == 0 {
 		return false
 	}

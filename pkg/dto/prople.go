@@ -11,4 +11,9 @@ type PeopleOutput struct {
 	Description string           `json:"description"`
 	Local       string           `json:"local"`
 	Sex         int              `json:"sex"`
+	Url         []string         `json:"url"`
+}
+
+type PeopleImageOutput struct {
+	Url string `json:"url"`
 }

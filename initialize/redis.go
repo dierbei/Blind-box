@@ -1,8 +1,9 @@
 package initialize
 
 import (
-	"github.com/dierbei/blind-box/global"
 	"github.com/go-redis/redis/v8"
+
+	"github.com/dierbei/blind-box/global"
 )
 
 func initRedis() {

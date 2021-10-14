@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"github.com/dierbei/blind-box/pkg/dto"
 	"net/http"
 	"strconv"
 
@@ -11,6 +10,8 @@ import (
 	"github.com/dierbei/blind-box/global"
 	"github.com/dierbei/blind-box/internal/middleware"
 	"github.com/dierbei/blind-box/internal/model"
+	"github.com/dierbei/blind-box/pkg/ali_oss"
+	"github.com/dierbei/blind-box/pkg/dto"
 	"github.com/dierbei/blind-box/pkg/forms"
 )
 
@@ -23,7 +24,13 @@ func ManRegister(router *gin.RouterGroup) {
 	peopleGroup := router.Group("/people")
 	peopleGroup.GET("/add", people.AddPeople)
 	peopleGroup.GET("/random", people.RandomPeople)
-	peopleGroup.GET("/list", people.List)
+	peopleGroup.GET("/list", middleware.Cors(), people.List)
+	peopleGroup.POST("/upload", people.Upload)
+}
+
+func (handler *PeopleController) Upload(ctx *gin.Context) {
+	filePath := ali_oss.UploadFile(ctx)
+	middleware.ResponseSuccess(ctx, dto.PeopleImageOutput{Url: filePath})
 }
 
 func (handler *PeopleController) List(ctx *gin.Context) {
@@ -43,6 +50,8 @@ func (handler *PeopleController) List(ctx *gin.Context) {
 			WxNumber:    people.WxNumber,
 			Description: people.Description,
 			Local:       people.Local,
+			Url:         people.Images,
+			Sex:         people.Sex,
 		}
 		peopleDtoList = append(peopleDtoList, peopleDto)
 	}
@@ -61,6 +70,13 @@ func (handler *PeopleController) RandomPeople(ctx *gin.Context) {
 		return
 	}
 
+	// 判断用户是否有权限抽取纸条
+	user, err := (&model.User{BaseModel: model.BaseModel{ID: int32(userIDInt)}}).SelectByID(global.MySQLTx)
+	if err != nil || user.Status == 0 {
+		middleware.ResponseError(ctx, http.StatusInternalServerError, errors.New("需要先投递一次纸条哦~"))
+		return
+	}
+
 	people, err := (&model.People{UserID: int32(userIDInt), Sex: sexInt}).Random(global.MySQLTx)
 	if err != nil {
 		middleware.ResponseError(ctx, http.StatusInternalServerError, err)
@@ -68,12 +84,14 @@ func (handler *PeopleController) RandomPeople(ctx *gin.Context) {
 	}
 
 	middleware.ResponseSuccess(ctx, dto.PeopleOutput{
+		ID:          people.ID,
 		CreatedAt:   model.FormatTime(people.CreatedAt),
 		UpdatedAt:   model.FormatTime(people.UpdatedAt),
 		UserID:      people.UserID,
 		WxNumber:    people.WxNumber,
 		Description: people.Description,
 		Local:       people.Local,
+		Sex:         people.Sex,
 	})
 	return
 }
@@ -113,6 +131,11 @@ func (handler *PeopleController) AddPeople(ctx *gin.Context) {
 		return
 	}
 
-	middleware.ResponseSuccess(ctx, "")
+	if err = (&model.User{}).UpdateStatus(global.MySQLTx); err != nil {
+		middleware.ResponseError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	middleware.ResponseSuccess(ctx, nil)
 	return
 }

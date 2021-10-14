@@ -3,9 +3,10 @@ package wx
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dierbei/blind-box/global"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/dierbei/blind-box/global"
 )
 
 //WxSession 微信登陆接口返回session
