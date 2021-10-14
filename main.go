@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/dierbei/blind-box/initialize"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/dierbei/blind-box/initialize"
 )
 
 func main() {
