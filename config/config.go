@@ -7,6 +7,7 @@ type ServerConfig struct {
 	MaxHeaderBytes int         `mapstructure:"max_header_bytes" json:"max_header_bytes"`
 	MySQL          MySQLConfig `mapstructure:"mysql" json:"mysql"`
 	Wx             WxConfig    `mapstructure:"wx" json:"wx"`
+	Redis          RedisConfig `mapstructure:"redis" json:"redis"`
 }
 
 type MySQLConfig struct {
@@ -21,4 +22,10 @@ type WxConfig struct {
 	AppID     string `json:"app_id" mapstructure:"appid"`
 	Secret    string `json:"secret" mapstructure:"secret"`
 	GrantType string `json:"grant_type" mapstructure:"grant_type"`
+}
+
+type RedisConfig struct {
+	Addr     string `json:"addr" mapstructure:"addr"`
+	Password string `json:"password" mapstructure:"password"`
+	DB       int    `json:"db" mapstructure:"db"`
 }

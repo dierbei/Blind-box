@@ -1,8 +1,9 @@
 package forms
 
 import (
-	"github.com/dierbei/blind-box/pkg/public"
 	"github.com/gin-gonic/gin"
+
+	"github.com/dierbei/blind-box/pkg/public"
 )
 
 type ManListPageInput struct {
@@ -14,10 +15,13 @@ func (params *ManListPageInput) BindingValidParams(c *gin.Context) error {
 	return public.DefaultGetValidParams(c, params)
 }
 
-type ManAddForm struct {
-	Username string `form:"username" json:"username" comment:"用户名" validate:"required"`
+type PeopleAddForm struct {
+	WxNumber    string   `form:"wx_number" json:"wx_number" comment:"微信号" validate:"required"`
+	Description string   `form:"description" json:"description"  comment:"个人简介" validate:"required"`
+	Local       string   `form:"local" json:"local" comment:"位置" validate:"required"`
+	Images      []string `form:"images" json:"images" comment:"自拍"`
 }
 
-func (params *ManAddForm) BindingValidParams(c *gin.Context) error {
+func (params *PeopleAddForm) BindingValidParams(c *gin.Context) error {
 	return public.DefaultGetValidParams(c, params)
 }

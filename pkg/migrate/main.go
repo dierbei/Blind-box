@@ -1,17 +1,20 @@
 package main
 
 import (
-	"log"
-	"os"
-	"time"
-
+	"github.com/dierbei/blind-box/internal/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-
-	"github.com/dierbei/blind-box/internal/model"
+	"log"
+	"os"
+	"time"
 )
+
+//func main() {
+//	key := global.RedisClient.RandomKey(context.Background())
+//	fmt.Println(key)
+//}
 
 func main() {
 	dsn := "root:root@tcp(192.168.244.137:3306)/blindbox?charset=utf8mb4&parseTime=True&loc=Local"
@@ -37,8 +40,9 @@ func main() {
 	}
 
 	_ = db.AutoMigrate(
-		&model.Man{},
-		&model.Woman{},
-		&model.User{},
+		//&model.Man{},
+		//&model.Woman{},
+		//&model.People{},
+		&model.Image{},
 	)
 }

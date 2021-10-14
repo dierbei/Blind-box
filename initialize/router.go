@@ -20,6 +20,7 @@ func HttpServerRun() {
 	InitLogger()
 	InitConfig()
 	InitMySQL()
+	initRedis()
 
 	//todo 发布需要设置为release
 	//gin.SetMode(global.ServerConfig.Mode)
@@ -62,13 +63,6 @@ func InitRouter() *gin.Engine {
 		middleware.TranslationMiddleware())
 	{
 		v1.ManRegister(manGroup)
-	}
-
-	womanGroup := engine.Group("/v1")
-	manGroup.Use(
-		middleware.TranslationMiddleware())
-	{
-		v1.WomanRegister(womanGroup)
 	}
 
 	userGroup := engine.Group("/v1")

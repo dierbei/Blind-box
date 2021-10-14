@@ -14,3 +14,8 @@ wx:
   appid: 'wx7e1a5b4562d9d59e'
   secret: 'c438a24790fff29f29a4edad9ce601e3'
   grant_type: 'authorization_code'
+
+redis:
+  addr: '192.168.244.137:6379'
+  password: 'youhe@@@520'
+  db: 0
