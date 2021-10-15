@@ -63,7 +63,7 @@ func InitRouter() *gin.Engine {
 	manGroup := engine.Group("/v1")
 	manGroup.Use(
 		middleware.TranslationMiddleware(),
-		middleware.Logging())
+	)
 	{
 		v1.ManRegister(manGroup)
 	}

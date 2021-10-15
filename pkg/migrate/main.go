@@ -43,9 +43,10 @@ func main() {
 	_ = db.AutoMigrate(
 		//&model.Man{},
 		//&model.Woman{},
-		//&model.People{},
-		//&model.Image{},
+		&model.People{},
+		&model.Image{},
 		&model.User{},
+		&model.UserPrize{},
 	)
 }
 

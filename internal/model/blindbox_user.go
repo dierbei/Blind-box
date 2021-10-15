@@ -9,7 +9,15 @@ type User struct {
 }
 
 func (userModel *User) UpdateStatus(tx *gorm.DB) error {
-	if err := tx.Table(userModel.TableName()).Update("status = ?", 1).Error; err != nil {
+	user := User{}
+	if err := tx.Table(userModel.TableName()).Where("id = ?", userModel.ID).First(&user).Error; err != nil {
+		return err
+	}
+	if user.Status != 0 {
+		return nil
+	}
+
+	if err := tx.Table(userModel.TableName()).Where("id = ?", userModel.ID).Update("status", 1).Error; err != nil {
 		return err
 	}
 	return nil

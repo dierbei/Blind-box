@@ -63,12 +63,20 @@ func (handler *UserController) MyAddList(ctx *gin.Context) {
 
 	dtoList := make([]dto.UserAddListOutput, 0)
 	for _, people := range peoples {
+		images, _ := (&model.Image{PeopleID: people.ID}).SelectByPeopleID(global.MySQLTx)
+		urlSlice := make([]string, 0)
+		for _, image := range images {
+			urlSlice = append(urlSlice, image.Url)
+		}
+
 		dtoInfo := dto.UserAddListOutput{
+			ID:          people.ID,
 			CreatedAt:   model.FormatTime(people.CreatedAt),
 			UserID:      people.UserID,
 			WxNumber:    people.WxNumber,
 			Description: people.Description,
 			Local:       people.Local,
+			Images:      urlSlice,
 		}
 		dtoList = append(dtoList, dtoInfo)
 	}
@@ -80,6 +88,12 @@ func (handler *UserController) PrizeList(ctx *gin.Context) {
 	userID := ctx.DefaultQuery("userid", "0")
 	userIDInt, _ := strconv.Atoi(userID)
 
+	if userIDInt == 0 {
+		middleware.ResponseError(ctx, 500, errors.New("用户未登录"))
+		return
+	}
+
+	// 查看user和people的关系列表
 	prizes, err := (&model.UserPrize{UserID: int32(userIDInt)}).SelectList(global.MySQLTx)
 	if err != nil {
 		middleware.ResponseError(ctx, 500, err)
@@ -93,29 +107,72 @@ func (handler *UserController) PrizeList(ctx *gin.Context) {
 			middleware.ResponseError(ctx, 500, err)
 			return
 		}
+		peopleList = append(peopleList, people)
+	}
 
-		// 查询people的自拍
-		images, _ := (&model.Image{PeopleID: people.ID}).SelectByPeopleID(global.MySQLTx)
+	for i := 0; i < len(peopleList); i++ {
+		images, _ := (&model.Image{PeopleID: peopleList[i].ID}).SelectByPeopleID(global.MySQLTx)
 		url := make([]string, 0)
 		for _, image := range images {
 			url = append(url, image.Url)
 		}
-		people.Images = url
-
-		peopleList = append(peopleList, people)
+		peopleList[i].Images = url
 	}
 
 	dtoList := make([]dto.UserAddListOutput, 0)
 	for _, people := range peopleList {
 		dtoInfo := dto.UserAddListOutput{
+			ID:          people.ID,
 			CreatedAt:   model.FormatTime(people.CreatedAt),
 			UserID:      people.UserID,
 			WxNumber:    people.WxNumber,
 			Description: people.Description,
 			Local:       people.Local,
+			Images:      people.Images,
 		}
 		dtoList = append(dtoList, dtoInfo)
 	}
+
+	//for _, people := range peopleList {
+	//	images, _ := (&model.Image{PeopleID: people.ID}).SelectByPeopleID(global.MySQLTx)
+	//	url := make([]string, 0)
+	//	for _, image := range images {
+	//		url = append(url, image.Url)
+	//	}
+	//	people.Images = url
+	//}
+
+	//peopleList := make([]*model.People, 0)
+	//for _, prize := range prizes {
+	//	people, err := (&model.People{BaseModel: model.BaseModel{ID: prize.PrizeID}}).Select(global.MySQLTx)
+	//	if err != nil {
+	//		middleware.ResponseError(ctx, 500, err)
+	//		return
+	//	}
+	//
+	//	// 查询people的自拍
+	//	images, _ := (&model.Image{PeopleID: people.ID}).SelectByPeopleID(global.MySQLTx)
+	//	url := make([]string, 0)
+	//	for _, image := range images {
+	//		url = append(url, image.Url)
+	//	}
+	//	people.Images = url
+	//
+	//	peopleList = append(peopleList, people)
+	//}
+	//
+	//dtoList := make([]dto.UserAddListOutput, 0)
+	//for _, people := range peopleList {
+	//	dtoInfo := dto.UserAddListOutput{
+	//		CreatedAt:   model.FormatTime(people.CreatedAt),
+	//		UserID:      people.UserID,
+	//		WxNumber:    people.WxNumber,
+	//		Description: people.Description,
+	//		Local:       people.Local,
+	//		Images:      people.Images,
+	//	}
+	//	dtoList = append(dtoList, dtoInfo)
+	//}
 
 	middleware.ResponseSuccess(ctx, dtoList)
 }

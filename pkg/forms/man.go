@@ -16,10 +16,10 @@ func (params *ManListPageInput) BindingValidParams(c *gin.Context) error {
 }
 
 type PeopleAddForm struct {
-	WxNumber    string   `form:"wx_number" json:"wx_number" comment:"微信号" validate:"required"`
-	Description string   `form:"description" json:"description"  comment:"个人简介" validate:"required"`
-	Local       string   `form:"local" json:"local" comment:"位置" validate:"required"`
-	Images      []string `form:"images" json:"images" comment:"自拍"`
+	WxNumber    string `form:"wx_number" json:"wx_number" comment:"微信号" validate:"required"`
+	Description string `form:"description" json:"description"  comment:"个人简介" validate:"required"`
+	Local       string `form:"local" json:"local" comment:"位置" validate:"required"`
+	//Images      string `form:"fileList" json:"fileList" comment:"自拍"`
 }
 
 func (params *PeopleAddForm) BindingValidParams(c *gin.Context) error {

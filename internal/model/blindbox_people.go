@@ -1,10 +1,9 @@
 package model
 
 import (
+	"github.com/dierbei/blind-box/pkg/forms"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-
-	"github.com/dierbei/blind-box/pkg/forms"
 )
 
 type People struct {
@@ -15,6 +14,13 @@ type People struct {
 	Local       string   `json:"local"`
 	Sex         int      `json:"sex"`
 	Images      []string `json:"images"`
+}
+
+func (peopleModel *People) Delete(tx *gorm.DB) error {
+	if err := tx.Table(peopleModel.TableName()).Where("id = ?", peopleModel.ID).Delete(&People{}).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (peopleModel *People) SelectAll(tx *gorm.DB) ([]People, error) {
@@ -52,24 +58,24 @@ func (peopleModel *People) Random(tx *gorm.DB) (*People, error) {
 	}
 
 	// 查询此奖品和此用户是否有关联关系，如果有直接返回
-	if exist := (&UserPrize{UserID: peopleModel.UserID, PrizeID: people.ID}).Exist(tx); exist {
-		// 查询奖品的自拍
-		images, err := (&Image{PeopleID: peopleModel.ID}).SelectByPeopleID(tx)
-		if err != nil {
-			return &people, nil
-		}
-		url := make([]string, 0)
-		for _, image := range images {
-			url = append(url, image.Url)
-		}
-		people.Images = url
-		return &people, nil
-	}
+	//if exist := (&UserPrize{UserID: peopleModel.UserID, PrizeID: people.ID}).Exist(tx); exist {
+	//	// 查询奖品的自拍
+	//	images, err := (&Image{PeopleID: peopleModel.ID}).SelectByPeopleID(tx)
+	//	if err != nil {
+	//		return &people, nil
+	//	}
+	//	url := make([]string, 0)
+	//	for _, image := range images {
+	//		url = append(url, image.Url)
+	//	}
+	//	people.Images = url
+	//	return &people, nil
+	//}
 
 	// 创建奖品和用户的关联关系
-	if err := (&UserPrize{UserID: peopleModel.UserID, PrizeID: people.ID}).Insert(tx); err != nil {
-		return nil, err
-	}
+	//if err := (&UserPrize{UserID: peopleModel.UserID, PrizeID: people.ID}).Insert(tx); err != nil {
+	//	return nil, err
+	//}
 
 	return &people, nil
 }
@@ -85,7 +91,7 @@ func (peopleModel *People) SelectByWxNumber(tx *gorm.DB) bool {
 
 func (peopleModel *People) Select(tx *gorm.DB) (*People, error) {
 	people := People{}
-	result := tx.Where("id = ?", peopleModel.ID).Find(&people)
+	result := tx.Table(peopleModel.TableName()).Where("id = ?", peopleModel.ID).Order("created_at desc").Find(&people)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -95,31 +101,37 @@ func (peopleModel *People) Select(tx *gorm.DB) (*People, error) {
 func (peopleModel *People) Insert(tx *gorm.DB) error {
 	newTx := tx.Begin()
 
+	peopleModel.Images = nil
 	if err := newTx.Table(peopleModel.TableName()).Create(peopleModel).Error; err != nil {
 		return err
 	}
 
-	if len(peopleModel.Images) > 9 {
-		return errors.New("最多上传9张图片")
-	}
+	//fileSlice := strings.Split(fileList, ",")
 
-	images := make([]Image, 0)
-	if len(peopleModel.Images) != 0 {
-		for _, url := range peopleModel.Images {
-			image := Image{
-				PeopleID: peopleModel.ID,
-				Url:      url,
-			}
-			images = append(images, image)
-		}
-	}
+	//if len(fileSlice) > 9 {
+	//	return errors.New("最多上传9张图片")
+	//}
+	//
+	////images := make([]Image, 0)
+	//if len(fileSlice) != 0 {
+	//	for _, url := range fileSlice {
+	//		image := Image{
+	//			PeopleID: peopleModel.ID,
+	//			Url:      url,
+	//		}
+	//		if err := image.Insert(tx); err != nil {
+	//			tx.Rollback()
+	//			return err
+	//		}
+	//	}
+	//}
 
-	if len(images) > 0 {
-		if err := (&Image{}).Insert(newTx, images); err != nil {
-			newTx.Rollback()
-			return err
-		}
-	}
+	//if len(images) > 0 {
+	//	if err := (&Image{}).Insert(newTx, images); err != nil {
+	//		newTx.Rollback()
+	//		return err
+	//	}
+	//}
 
 	newTx.Commit()
 	return nil
@@ -127,20 +139,20 @@ func (peopleModel *People) Insert(tx *gorm.DB) error {
 
 func (peopleModel *People) SelectAddListByUserID(tx *gorm.DB) ([]People, error) {
 	peoples := make([]People, 0)
-	result := tx.Where("user_id = ?", peopleModel.UserID).Find(&peoples)
+	result := tx.Table(peopleModel.TableName()).Where("user_id = ?", peopleModel.UserID).Order("created_at desc").Find(&peoples)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	for i := 0; i < len(peoples); i++ {
-		// 查询people的自拍
-		images, _ := (&Image{PeopleID: peoples[i].ID}).SelectByPeopleID(tx)
-		url := make([]string, 0)
-		for _, image := range images {
-			url = append(url, image.Url)
-		}
-		peoples[i].Images = url
-	}
+	//for i := 0; i < len(peoples); i++ {
+	//	// 查询people的自拍
+	//	images, _ := (&Image{PeopleID: peoples[i].ID}).SelectByPeopleID(tx)
+	//	url := make([]string, 0)
+	//	for _, image := range images {
+	//		url = append(url, image.Url)
+	//	}
+	//	peoples[i].Images = url
+	//}
 
 	return peoples, result.Error
 }
